@@ -13,7 +13,7 @@ export default function Home() {
     <article
       className={cn([
         'transition-all duration-1000 px-4 py-8',
-        'prose prose-sm sm:prose-base md:prose-xl xl:prose-2xl ',
+        'prose prose-sm sm:prose-base md:prose-xl ',
         'w-full sm:max-w-[420px] md:sm:max-w-[600px] lg:max-w-[800px] mx-auto',
       ])}
     >
