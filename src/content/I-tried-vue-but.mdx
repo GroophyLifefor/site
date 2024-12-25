@@ -1,0 +1,92 @@
+# I Tried To Learn Vue/Nuxt But…
+
+![I Tried To Learn Vue/Nuxt But…](https://miro.medium.com/v2/resize:fit:1100/format:webp/1*KnEbThGwTBswgEiKNiC0xQ.png)
+
+### Introduction
+
+I had the opportunity to try Vue, a library I’ve heard a lot about recently. The project was already set up, so I took part in a project developed with Nuxt(v3, I say this because strangely Nuxt.js is used to mean v2 while Nuxt is used to mean v3) and today I will leave my humble comments as a React/Next.js developer.
+
+I’ve had the opportunity to try a lot of different technologies lately, including some I’ve been using for a long time, with a quick little list;
+React, Next.js, Gulp.js, Astro, Remix, ASP.NET(I don’t like this either, the short answer is that it makes no sense to use it in small projects) and more.
+
+> The thing I most hated in Vue is “Trying to be easy and getting messed up”.
+
+### Effort to be different
+
+React has a different structure to look like javascript, Gulp.js has file-include in its simplest form, Astro seems to be similar to vue in syntax, but it’s not, because Astro doesn’t actually have anything complicated, what’s complicated about it? if you see something, you can understand what it’s doing. let’s not put ‘:’ at the beginning, let’s not put ‘v-’ at the beginning, I’ll put an example below.
+
+```js
+<script setup>
+const props = defineProps({
+  title: {
+    type: String,
+  },
+  description: {
+    type: String,
+  },
+});
+</setup>
+
+<template>
+  <span :as-prop="title">
+    as inner: {{ title }}
+  </span>
+</template>
+```
+
+May it looks good for first look but when you want interface implementation, it’s being more complex, and Astro is;
+
+```js
+---
+interface ComponentProps {
+  title: String;
+  description: String;
+}
+
+const { title, description } = Astro.props as ComponentProps;
+---
+
+<span as-prop={title}>
+  as inner: {title}
+</span>
+```
+
+I’ve seen in some places that Vue is good for small projects, it’s a complete lie, Vue is just a library with good performance and doesn’t feel usable.
+
+Also Vue/Nuxt has much less community than React and Next.js (Not sure to compare with Astro community). Let’s look at an even funnier example, I’m going to do the same component now with Gulp.js file-include.
+
+```html
+<span as-prop="@@title">
+  @@title
+</span>
+```
+
+Gulp not supporting typescript but Vue is getting more messy right now.
+
+The thing that I really hated, unknown global functions.
+Vue 3’s `<script setup>` syntax automatically imports some commonly used functions and utilities from Vue, such as `ref`. However, `useEmitter` is not a built-in Vue function, so it should be explicitly imported but still accepts.
+
+```js
+// Bad
+<script setup>
+const open = ref(false);
+const emitter = useEmitter();
+</script>
+
+// Good
+<script setup>
+import { ref } from 'vue';
+import { useEmitter } from 'path/emitter';
+
+const open = ref(false);
+const emitter = useEmitter();
+</script>
+```
+
+Why the second is more accurate: work environment support. Vue can understand where you are importing from, but your work environment may misunderstand it, and I am a developer, when I want to see where it comes from, my work environment does not show where it comes from, I use ‘find’ to search for the function in the whole codebase.
+
+Also Vue/Nuxt is not easy anyway, if you want to really easy to develop, just try Astro, if you have more hierarchical structure, just try Next.js or Remix, Vue/Nuxt is most overrated library and framework ever I see.
+
+_In all this, my clarity and the subject I am talking about may have made me seem like an expert. However, I am still a teenager in University and if you have different opinions, do not hesitate to contact me._
+
+_**Mail:** [muratkirazkaya0@gmail.com](mailto:muratkirazkaya0@gmail.com)_
