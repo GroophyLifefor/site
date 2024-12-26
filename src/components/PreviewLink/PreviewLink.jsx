@@ -2,14 +2,20 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import Image from 'next/image';
+import { useBlur } from "../BlurLayer/BlurLayer";
+import { useRef } from 'react';
 
 export default function PreviewLink({ href, target = '_blank', children, ...props }) {
   const [showTooltip, setShowTooltip] = useState(false);
   const [previewData, setPreviewData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { setShowBlur } = useBlur();
+
 
   const handleMouseEnter = async () => {
     setShowTooltip(true);
+    setShowBlur(true);
+  
     if (!previewData) {
       setLoading(true);
       try {
@@ -42,19 +48,25 @@ export default function PreviewLink({ href, target = '_blank', children, ...prop
     }
   };
 
+  function handleMouseLeave() {
+    setShowTooltip(false);
+    setShowBlur(false); 
+  }
+
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-block hover:z-50">
       <Link
         href={href}
         {...props}
         target={target}
         onMouseEnter={handleMouseEnter}
-        onMouseLeave={() => setShowTooltip(false)}
+        onMouseLeave={handleMouseLeave}
+        className=" text-sky-700 hover:text-sky-500 transition-colors duration-300"
       >
         {children}
       </Link>
       <div
-        className={`absolute z-10 w-72 p-2 bg-white rounded-lg shadow-lg border border-gray-200 -translate-x-1/2 left-1/2 !m-0 
+        className={`absolute z-10 w-full sm:w-72 p-2 bg-white rounded-lg shadow-lg border border-gray-200 -translate-x-1/2 left-1/2 !m-0 
           transition-opacity duration-300 ${showTooltip ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         style={{
           transition: 'opacity 0.3s ease, visibility 0.3s ease',

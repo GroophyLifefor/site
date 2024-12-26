@@ -6,7 +6,7 @@ const blogs = [
     title: 'I Tried To Learn Vue/Nuxt But...',
     slug: 'I-tried-vue-but',
   },
-]
+];
 
 export default function Home() {
   return (
@@ -21,17 +21,15 @@ export default function Home() {
       <h2 className="!mt-0 !mb-2">Software Engineer</h2>
       <h4 className="!mt-0">I code, do you?</h4>
       <p></p>
-      <h4>Blogs</h4>
+      <h4 className="!mt-2">Blogs</h4>
       <ul>
-        {
-          blogs.map(blog => (
-            <li className="!my-0" key={blog.slug}>
-              <PreviewLink href={`/blog/${blog.slug}`} target="_self">
-                {blog.title}
-              </PreviewLink>
-            </li>
-          ))
-        }
+        {blogs.map((blog) => (
+          <li className="!my-0" key={blog.slug}>
+            <PreviewLink href={`/blog/${blog.slug}`} target="_self">
+              {blog.title}
+            </PreviewLink>
+          </li>
+        ))}
       </ul>
       <h4>Projects</h4>
       <ul>

@@ -1,23 +1,30 @@
-import { Inter } from "next/font/google";
-import "./globals.css";
+import { Inter } from 'next/font/google';
+import './globals.css';
+import {
+  BlurProvider,
+} from '../components/BlurLayer/BlurLayer';
+import DrawBg from '../components/DrawBg/DrawBg';
 
 const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
+  variable: '--font-inter',
+  subsets: ['latin'],
 });
 
 export const metadata = {
-  title: "Murat Kirazkaya",
-  description: "Personal website of Murat Kirazkaya",
+  title: 'Murat Kirazkaya',
+  description: 'Personal website of Murat Kirazkaya',
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.variable} antialiased`}
-      >
-        {children}
+      <body className={`${inter.variable} antialiased`}>
+        <DrawBg>
+          <BlurProvider>
+            {/* <BlurLayer /> */}
+            {children}
+          </BlurProvider>
+        </DrawBg>
       </body>
     </html>
   );
