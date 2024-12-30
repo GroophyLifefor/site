@@ -1,0 +1,199 @@
+# Running .NET in the Browser without ASP.NET
+
+![Running .NET in the Browser without ASP.NET](https://miro.medium.com/v2/resize:fit:1100/format:webp/1*QfRTO8ZzSjJ56HCjP6a09g.jpeg)
+
+This article is going to talk about how to run C# code on a web site in the simplest terms.
+
+### Semi-Technical talk
+
+I utilized wasm-tools-net7, a workload based on wasm-tools, without incorporating any additional packages. My focus was on simplicity and the main topic. Understanding the topic thoroughly provides the necessary information to accomplish all other tasks.
+
+### How Works?
+
+![Working Principle of WebAssembly: Sequence Diagram](https://miro.medium.com/v2/resize:fit:1100/format:webp/1*dwFQL57ZTGrxG7k2ywvwaA.png)
+
+### Creating a Demo
+
+#### Creating Project
+
+- I used net7, but it’s up to you.
+
+```bash
+Dotnet new console -o WASM_Demo
+
+cd WASM_Demo
+
+Dotnet workload install wasm-tools-net7
+```
+
+From this point, modifications will need to be made to the csproj file.
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
+        <WasmMainJSPath>main.js</WasmMainJSPath>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <WasmExtraFilesToDeploy Include="index.html" />
+        <WasmExtraFilesToDeploy Include="main.js" />
+    </ItemGroup>
+
+</Project>
+```
+
+What we added:
+
+- RuntimeIdentifier (Required by wasm-tools)
+- WasmMainJSPath (Required by wasm-tools)
+- AllowUnsafeBlocks (JSExportAttribute requires unsafe code)
+- ItemGroup (Include as resource)
+  - Import index.html
+  - Import main.js
+
+Returning to the program.cs file, there are certain rules to consider.
+
+- Class have to be Public & Partial.
+- Function have to be Public & Static and have to attributed with [JSExport].
+
+Let’s do an example.
+
+```cs
+using System.Runtime.InteropServices.JavaScript;
+
+namespace WASM_Demo;
+
+public partial class Program
+{
+    static void Main(string[] args) { }
+
+    [JSExport]
+    public static string Response()
+    {
+        return """
+               <h1>
+                   Hello World
+               </h1>
+               """;
+    }
+}
+```
+
+That’s Okay but how do we run this code in the browser?
+
+The code that runs this program is dotnet.js, which comes with wasm-tools, so there is no need to worry about it. To use this dotnet.js, we simply use a file called main.js.
+
+
+```js
+import { dotnet } from './dotnet.js'
+
+const is_browser = typeof window != "undefined";
+if (!is_browser) throw new Error(`Expected to be running in a browser`);
+
+const { setModuleImports, getAssemblyExports, getConfig, runMainAndExit } = await dotnet
+    .withDiagnosticTracing(false)
+    .withApplicationArgumentsFromQuery()
+    .create();
+
+const config = getConfig();
+const exports = await getAssemblyExports(config.mainAssemblyName);
+
+const html = 
+    exports
+        .WASM_Demo    // Namespace
+        .Program      // Class Name
+        .Response();  // Function Name
+
+// Regular javascript code
+document.getElementById("app").innerHTML = `${html}`;
+
+await runMainAndExit(config.mainAssemblyName, [] /* Console App Args */);
+```
+
+A template for the index.html page has been prepared.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>WASM Demo</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="modulepreload" href="./dotnet.js" />
+    </head>
+    
+    <body>
+        <main id="app"></main>
+        <script type="module" src="./main.js"></script>
+    </body>
+</html>
+```
+
+Now, let us look at the process again,
+
+- HTTP request coming in
+- WASM-Tools handles this and sends the index.html file.
+- The index.html file requests dotnet.js and main.js files, dotnet.js is sent by WASM-Tools, main.js is our custom code.
+- By using dotnet.js in main.js, we can go inside the Program class in C# code, call the Response function and make any client-side change we want in main.js.
+
+There is one additional thing we have to do, you need to open a file called **runtimeconfig.template.json** and put the following JSON data in it.
+
+```json
+{
+  "wasmHostProperties": {
+    "perHostConfig": [
+      {
+        "name": "browser",
+        "html-path": "index.html",
+        "Host": "browser"
+      }
+    ]
+  }
+}
+```
+
+We have reached the end, and the program is now ready to run. The only command required is:
+
+```bash
+Dotnet run -c Release
+```
+
+![Example Image](https://miro.medium.com/v2/resize:fit:720/format:webp/1*4VCXdLRzf1O6vk3j6XOJFQ.png)
+
+### FAQ
+
+> Can I host all the files instead of wasm-tools? and how? 
+> 
+> Sure, but it can get a bit complicated, a project you make with wasm-tools can’t serve any other purpose, i.e. the console app doesn’t work, wasm-tools works instead. Because we choose browser-wasm as RuntimeIdentifier and multiple RuntimeIdentifiers are not available in .NET. As an alternative way, you can open two projects, set the first one as your WASM project, then set it as console app in your second project, then build the first project and host the output folder, all DLLs and files will be there.
+
+> This demo just index file, can I do multiple page? and how?
+> 
+> Sure, but it’s much harder than you think, because the way to do it is a method called SPA (Single Page Application), the user is always on the same page, only the content changes. There are various ways to do this. So it can be done with your creativity.
+
+> Can I do dynamic code like an Counter? and how?
+> 
+> Yes, I did it too, you can call C# functions over and over again, if you simply bind exports to the window object, you can call it from every JavaScript code.
+
+### Project Files
+
+[https://github.com/GroophyLifefor/WASM_Demo](https://github.com/GroophyLifefor/WASM_Demo)
+
+> If you found my article helpful, please let me know in any way you can, such as starring the repo or following my GitHub profile or any other way you can thank me, I would be very grateful.
+
+### Big Thanks
+
+[Maraf](https://github.com/maraf) (.NET on WASM [@microsoft](https://github.com/microsoft))
+
+> Aside from supporting this article, Maraf has been such a great mentor to me, I am so happy to have met this person in my little issue. 🧡
+
+_In all this, my clarity and the subject I am talking about may have made me seem like an expert. However, I am still a teenager in University and if you have different opinions, do not hesitate to contact me._
+
+_**Mail:** [muratkirazkaya0@gmail.com](mailto:muratkirazkaya0@gmail.com)_

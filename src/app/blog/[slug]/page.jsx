@@ -83,7 +83,7 @@ const components = {
   ul: (props) => <ul suppressHydrationWarning {...props} />,
   ol: (props) => <ol suppressHydrationWarning {...props} />,
   li: (props) => <li suppressHydrationWarning {...props} />,
-  blockquote: (props) => <blockquote suppressHydrationWarning {...props} />,
+  blockquote: (props) => <blockquote className="text-base font-medium" suppressHydrationWarning {...props} />,
   hr: () => <hr />,
   pre: (props) => (
     <pre className=" p-4 rounded-lg overflow-x-auto" suppressHydrationWarning {...props} />

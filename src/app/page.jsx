@@ -6,6 +6,10 @@ const blogs = [
     title: 'I Tried To Learn Vue/Nuxt But...',
     slug: 'I-tried-vue-but',
   },
+  {
+    title: 'Running .NET in the Browser without ASP.NET',
+    slug: 'running-net-in-the-browser-without-asp-net',
+  },
 ];
 
 export default function Home() {
@@ -39,6 +43,10 @@ export default function Home() {
           </PreviewLink>
         </li>
       </ul>
+
+      <PreviewLink href="/mmvp" target="_self">
+        <h5 className="text-sky-700 hover:text-sky-500 transition-colors duration-300">MMVP (My Most Valuable Professionals)</h5>
+      </PreviewLink>
     </article>
   );
 }

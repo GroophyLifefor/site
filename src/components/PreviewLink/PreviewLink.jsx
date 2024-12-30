@@ -66,8 +66,8 @@ export default function PreviewLink({ href, target = '_blank', children, ...prop
         {children}
       </Link>
       <div
-        className={`absolute z-10 w-full sm:w-72 p-2 bg-white rounded-lg shadow-lg border border-gray-200 -translate-x-1/2 left-1/2 !m-0 
-          transition-opacity duration-300 ${showTooltip ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={`absolute z-10 w-full overflow-hidden sm:w-72 p-2 bg-white rounded-lg shadow-lg border border-gray-200 -translate-x-1/2 left-1/2 !m-0 
+          transition-opacity duration-300 prose ${showTooltip ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         style={{
           transition: 'opacity 0.3s ease, visibility 0.3s ease',
           visibility: showTooltip ? 'visible' : 'hidden',
