@@ -1,6 +1,7 @@
 import PreviewLink from '../../components/PreviewLink/PreviewLink';
 import { cn } from '../../utils/lib';
 import AttilaAlkoc from '../../assets/attilaalkoc.jpg';
+import OzgeAydin from '../../assets/ozgeaydin.jpg';
 import Image from 'next/image';
 import { FaLinkedin } from 'react-icons/fa';
 import Link from 'next/link';
@@ -15,7 +16,16 @@ const attila = {
     'I am an experienced Agile Coach and Agile Software Development Advocate for more than 10 years. At the beginning of my career I worked as a software developer following eXtreme Programming practices and principles. Later on I provided my services as a Scrum Master and Agile Coach in different domains such as retail, telecom, banking, education and more.',
 };
 
-const MMVPs = [attila, attila, attila, attila, attila, attila];
+const ozge = {
+  name: 'Özge Aydın',
+  title: 'Community Manager, Kommunity | Podcast Host @Community Management',
+  profileImage: OzgeAydin,
+  linkedin: 'https://www.linkedin.com/in/ozgeeaydiin/',
+  description:
+    'No Implemented Yet',
+}
+
+const MMVPs = [attila, ozge];
 
 export default function Home() {
   return (
@@ -27,6 +37,7 @@ export default function Home() {
       ])}
     >
       <Navbar />
+      <h3 className=" bg-yellow-300 rounded-lg px-2 py-1">This Page Is Work In Process</h3>
       <h1 className="!mb-0 font-semibold">
         <span className="font-black">M</span>y{' '}
         <span className="font-black">M</span>ost{' '}
@@ -36,6 +47,7 @@ export default function Home() {
       <h4 className="!mt-0 !mb-0">
         The Most Valuable Names of the Industry in Türkiye
       </h4>
+      <i>List order does not mean priority. </i>
       <p></p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {MMVPs.map((mmvp) => (
