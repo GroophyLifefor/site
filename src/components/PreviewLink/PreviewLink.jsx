@@ -4,8 +4,8 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { useBlur } from "../BlurLayer/BlurLayer";
 import { useRef } from 'react';
-
-export default function PreviewLink({ href, target = '_blank', children, ...props }) {
+import { cn } from '../../utils/lib';
+export default function PreviewLink({ href, target = '_blank', className = '', children, ...props }) {
   const [showTooltip, setShowTooltip] = useState(false);
   const [previewData, setPreviewData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -26,6 +26,10 @@ export default function PreviewLink({ href, target = '_blank', children, ...prop
           href = `${ourProtocol}//${ourHostname}${href}`;
         } 
         const response = await fetch(`/api/og-preview?url=${encodeURIComponent(href)}`);
+        if (!response.ok) {
+          console.log('og preview failed');
+          return;
+        }
         const data = await response.json();
         if (!data.title && !data.description && !data.image) {
           const hostname = new URL(href).hostname;
@@ -41,7 +45,7 @@ export default function PreviewLink({ href, target = '_blank', children, ...prop
           image: data.image || null,
         });
       } catch (error) {
-        console.error('Failed to fetch preview:', error);
+        console.warn('Failed to fetch preview:', error);
       } finally {
         setLoading(false);
       }
@@ -61,7 +65,10 @@ export default function PreviewLink({ href, target = '_blank', children, ...prop
         target={target}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className=" text-sky-700 hover:text-sky-500 transition-colors duration-300"
+        className={cn([
+          " text-sky-700 hover:text-sky-500 transition-colors duration-300",
+          className
+        ])}
       >
         {children}
       </Link>
